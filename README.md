@@ -40,7 +40,7 @@ vagrantとvirtualboxもしくはdockerがインストールされているlinux�
 
 	```bash
 		$ cd /vagrant
-		$ /vagrant/docker-build.sh
+		$ ./docker-build.sh
 	```
 
 * Dockerから起動する方式

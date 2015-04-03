@@ -39,6 +39,7 @@ vagrantとvirtualboxもしくはdockerがインストールされているlinux�
 	CoreOSが立ち上がるので、PuTTYなどでSSHでログインする (接続先は vagrant ssh-configで確認)
 
 	```bash
+		$ cd /vagrant
 		$ /vagrant/docker-build.sh
 	```
 

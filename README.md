@@ -129,7 +129,7 @@ sanbox.localに対して3306にアクセスすることでMySQLコンテナに�
 
 ### 関係図 ###
 
-![関係図](https://github.com/mistymagich/vagrant-docker-php/relation.png)
+![関係図](https://raw.githubusercontent.com/mistymagich/vagrant-docker-php/master/relation.png)
 
 PHP(FPM)コンテナはホスト名mysqlでMySQLコンテナにアクセスできます。
 Nginxコンテナはホスト名phpでPHP(FPM)コンテナを参照しています。

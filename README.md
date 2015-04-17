@@ -36,24 +36,17 @@ vagrantとvirtualboxもしくはdockerがインストールされているlinux�
 		> vagrant up
 	```
 
-	CoreOSが立ち上がるので、PuTTYなどでSSHでログインする (接続先は vagrant ssh-configで確認)
-
-	```bash
-		$ cd /vagrant
-		$ ./docker-build.sh
-	```
-
 * Dockerから起動する方式
 
 	```bash
 		$ git clone https://github.com/mistymagich/vagrant-docker-php.git
 		$ cd vagrant-docker-php
 		$ chmod +x *.sh
-		$ sudo ./docker-build.sh
         $ sudo echo '127.0.0.1 sandbox.local' >> /etc/hosts
+		$ sudo ./docker-run.sh
 	```
 
-    Ubuntu/Debianでdockerコマンドがdocker.io[^1]になっている場合、docker-build.sh、docker-run.shの
+    Ubuntu/Debianでdockerコマンドがdocker.io[^1]になっている場合、docker-run.shの
 
     ```bash
     DOCKER=docker
@@ -67,27 +60,13 @@ vagrantとvirtualboxもしくはdockerがインストールされているlinux�
 
     に変更したのち実行する。
 
-## 起動 ##
 
-```bash
-$ sudo ./docker-run.sh
-```
+[^1]: Ubuntu/Debianの場合、dockerコマンドがdocker.ioになっているため、[いまさら聞けないDocker入門（2）：ついに1.0がリリース！ Dockerのインストールと主なコマンドの使い方 (1/3) - ＠IT](http://www.atmarkit.co.jp/ait/articles/1406/10/news031.html)にあるようにしてdockerコマンドを利用できるようにする方法もあります。
 
-正常に起動できれば、ブラウザで
 
-```
-http://sandbox.local
-```
+正常に起動できれば、ブラウザで http://sandbox.local でアクセスするとPHPInfoが表示されます。
 
-でアクセスするとPHPInfoが表示されます。
-
-MySQLコンテナとの接続サンプルは
-
-```
-http://sandbox.local/dbconnect.php
-```
-
-にあります。
+MySQLコンテナとの接続サンプルは http://sandbox.local/dbconnect.php にあります。
 
 
 ## 構造 ##
@@ -135,7 +114,7 @@ sanbox.localに対して3306にアクセスすることでMySQLコンテナに�
 PHP(FPM)コンテナはホスト名mysqlでMySQLコンテナにアクセスできます。
 Nginxコンテナはホスト名phpでPHP(FPM)コンテナを参照しています。
 
-## PHPMyAdminを動かすサンプル ##
+## PHPMyAdminのインストールサンプル ##
 
 1. [PHPMyAdmin](http://www.phpmyadmin.net/home_page/downloads.php)をダウンロード
 2. 解凍して、中にあるPHPファイルをsrc/publicにコピー（すでにあるファイルは削除する）
@@ -166,6 +145,4 @@ Nginxコンテナはホスト名phpでPHP(FPM)コンテナを参照していま�
 * docker-run.sh実行時にすべてのコンテナを削除します。
 * コンテナが正常に動かない場合、docker ps -aでコンテナIDを調べ、docker logs コンテナID で原因となるメッセージが出力されることがあります。
 
-
-[^1]: Ubuntu/Debianの場合、dockerコマンドがdocker.ioになっているため、[いまさら聞けないDocker入門（2）：ついに1.0がリリース！ Dockerのインストールと主なコマンドの使い方 (1/3) - ＠IT](http://www.atmarkit.co.jp/ait/articles/1406/10/news031.html)にあるようにしてdockerコマンドを利用できるようにする方法もあります。
 

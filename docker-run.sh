@@ -12,6 +12,10 @@ if [ ! -z "$CONTAINERS" ] ; then
 	echo $CONTAINERS | xargs ${DOCKER} stop | xargs ${DOCKER} rm
 fi
 
+# Build Container
+${DOCKER} build --rm -t php:fpm-custom ${CURDIR}/php-fpm
+${DOCKER} build --rm -t nginx:custom ${CURDIR}/nginx
+
 # MySQL Container
 ${DOCKER} run -d --name sandbox-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=mysecretpw mysql
 

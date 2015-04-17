@@ -38,4 +38,8 @@ Vagrant.configure(2) do |config|
     v.check_guest_additions = false
     v.functional_vboxsf     = false
   end
+
+  # docker run
+  config.vm.provision "shell",
+      inline: "/vagrant/docker-run.sh"
 end

@@ -1,101 +1,57 @@
-# vagrant-docker-php README #
+# vagrant-docker-php #
 
-Vagrant+Dockerで作るPHPの実行環境
+Vagrant+Docker(Docker Compose)で作るPHPの実行環境
 
 php,nginx,mysqlのコンテナを動かして、PHPを実行させる環境です。
 
-vagrantとvirtualboxもしくはdockerがインストールされているlinuxから起動できます。
-
 ## 必要なもの ##
 
-* Vagrantを使う方式
+* [VirtualBox](https://www.virtualbox.org)
+* [Vagrant](https://www.vagrantup.com)
+* Vagrantプラグイン
 
-	* [VirtualBox](https://www.virtualbox.org)
-	* [Vagrant](https://www.vagrantup.com)
-	* Vagrantプラグイン
+	* [Vagrant Host Manager](https://github.com/smdahlen/vagrant-hostmanager)
 
-		* [Vagrant Host Manager](https://github.com/smdahlen/vagrant-hostmanager)
+	  ```
+	  vagrant plugin install vagrant-hostmanager
+	  ```
 
-		  ```
-		  vagrant plugin install vagrant-hostmanager
-		  ```
-
-* Dockerから起動する方式
-
-	* [Docker](https://www.docker.com/)がインストールされたLinux
-      バージョン 1.5.0 以上
+* [Docker](https://www.docker.com/) バージョン 1.5.0 以上
+* [Docker Compose](http://docs.docker.com/compose/)
 
 
 ## セットアップ ##
 
-* Vagrantを使う方式
+ホストOSより
 
-	```
-		> git clone https://github.com/mistymagich/vagrant-docker-php.git
-		> cd vagrant-docker-php
-		> vagrant up
-	```
-
-* Dockerから起動する方式
-
-	```bash
-		$ git clone https://github.com/mistymagich/vagrant-docker-php.git
-		$ cd vagrant-docker-php
-		$ chmod +x *.sh
-        $ sudo echo '127.0.0.1 sandbox.local' >> /etc/hosts
-		$ sudo ./docker-run.sh
-	```
-
-    Ubuntu/Debianでdockerコマンドがdocker.io[^1]になっている場合、docker-run.shの
-
-    ```bash
-    DOCKER=docker
-    ```
-
-    を
-
-    ```bash
-    DOCKER=docker.io
-    ```
-
-    に変更したのち実行する。
-
-
-[^1]: Ubuntu/Debianの場合、dockerコマンドがdocker.ioになっているため、[いまさら聞けないDocker入門（2）：ついに1.0がリリース！ Dockerのインストールと主なコマンドの使い方 (1/3) - ＠IT](http://www.atmarkit.co.jp/ait/articles/1406/10/news031.html)にあるようにしてdockerコマンドを利用できるようにする方法もあります。
-
+```bash
+	git clone https://github.com/mistymagich/vagrant-docker-php.git
+	cd vagrant-docker-php
+	vagrant up
+```
 
 正常に起動できれば、ブラウザで http://sandbox.local でアクセスするとPHPInfoが表示されます。
-
-MySQLコンテナとの接続サンプルは http://sandbox.local/dbconnect.php にあります。
 
 
 ## 構造 ##
 
 ### Nginxコンテナ ###
 
-コンテナ名：sandbox-nginx
+[公式Nginxコンテナ](https://registry.hub.docker.com/_/nginx/)をもとに、[Set up Automatic Virtual Hosts with Nginx and Apache](http://www.sitepoint.com/set-automatic-virtual-hosts-nginx-apache/)の設定を用いて、任意のホスト名「**hoge**.local」に対して、ドキュメントルートはホストOSにある「www/**hoge**/public」を参照するようにしています。
 
-[公式Nginxコンテナ](https://registry.hub.docker.com/_/nginx/)をもとに、ホスト名sandbox.localに対して、PHPコンテナを参照する設定追加しています。
-ドキュメントルートはsrc/public
-拡張子がPHPならPHPコンテナにあるPHP-FPMを通して実行されます。
+ゲストOSのポートTCP80,443にアクセスすることでNginxコンテナにアクセスできます。
 
 ### MySQLコンテナ ###
-
-コンテナ名：sandbox-mysql
 
 [公式MySQLコンテナ](https://registry.hub.docker.com/_/mysql/)をそのまま利用しています。
 
 データの永続化はしていません。
 
-docker-run.sh実行時にsrcディレクトリにあるinit.sqlを実行することで、データベース・テーブル・データのインポートを行っています。
+ゲストOSのポートTCP3306にアクセスすることでMySQLコンテナにアクセスできます。
 
-sanbox.localに対して3306にアクセスすることでMySQLコンテナにアクセスできます。
-
-ユーザー名はroot、パスワードはdocker-run.shでMySQLコンテナ起動時にMYSQL_ROOT_PASSWORDで指定している値です。(編集していない場合、mysecretpw)
+ユーザー名はroot、パスワードは**docker-compose.yml**にある環境変数**MYSQL_ROOT_PASSWORD**の値です。
 
 ### PHP(FPM)コンテナ ###
-
-コンテナ名：sandbox-php
 
 [公式PHPコンテナ](https://registry.hub.docker.com/_/php/)のFPMをもとに、以下のモジュールを追加しています。
 
@@ -106,6 +62,10 @@ sanbox.localに対して3306にアクセスすることでMySQLコンテナに�
 * mcrypt
 * mbstring
 * iconv
+* xdebug
+
+ホスト名**mysql**でMySQLコンテナを参照します。
+
 
 ### 関係図 ###
 
@@ -116,10 +76,12 @@ Nginxコンテナはホスト名phpでPHP(FPM)コンテナを参照していま�
 
 ## PHPMyAdminのインストールサンプル ##
 
-1. [PHPMyAdmin](http://www.phpmyadmin.net/home_page/downloads.php)をダウンロード
-2. 解凍して、中にあるPHPファイルをsrc/publicにコピー（すでにあるファイルは削除する）
-3. config.sample.incをconfig.incにリネーム
-4. config.incを編集
+1. **Vagrantfile**の**config.hostmanager.aliases**に**phpmyadmin.local**を追加してvagrant up
+2. wwwフォルダに**phpmyadmin**フォルダを作成し、さらにその中に**public**フォルダを作成する
+3. [PHPMyAdmin](http://www.phpmyadmin.net/home_page/downloads.php)をダウンロード
+4. 解凍して、中にあるPHPファイルを2.で作成したpublic以下にコピー
+5. config.sample.incをconfig.incにリネーム
+6. config.incを編集
 
    ホスト名を変更
 
@@ -132,17 +94,36 @@ Nginxコンテナはホスト名phpでPHP(FPM)コンテナを参照していま�
      $cfg['Servers'][$i]['connect_type'] = 'tcp';
    ```
 
-   末尾に追加
+   "?>"の直前に追加
 
    ```php
      $cfg['CheckConfigurationPermissions'] = false;
+     ?>
    ```
-5. http://sandbox.localにアクセス
-6. ID:root / PW:mysecretpw (docker-run.shのMySQLコンテナ起動時のMYSQL_ROOT_PASSWORDで指定している値)
+7. http://phpmyadmin.local にアクセス
+8. ID:root / PW:mysecretpw でログイン(**docker-compose.yml**にある環境変数**MYSQL_ROOT_PASSWORD**の値)
 
 ## その他 ##
 
-* docker-run.sh実行時にすべてのコンテナを削除します。
-* コンテナが正常に動かない場合、docker ps -aでコンテナIDを調べ、docker logs コンテナID で原因となるメッセージが出力されることがあります。
+### アクセスログ
+
+ゲストOSにログインしたのち、
+
+```bash
+	cd /vagrant
+    docker-compose logs
+```
+
+※MySQLコンテナ、PHP(FPM)コンテナのログ出力も表示されます。
 
 
+### ホスト名とIPの関連付けについて
+
+ホストOSのhostsファイルに任意のホスト名とゲストOSのIPを対応付けることでVagrant Host Managerを使用しなくても利用可能です。
+
+### VagrantなしでDockerから起動する場合
+
+1. git clone https://github.com/mistymagich/vagrant-docker-php.git
+2. cd vagrant-docker-php
+1. **docker-compose.yml**の**volumes**の左側の現在のフルパスに修正
+2. docker-compose up

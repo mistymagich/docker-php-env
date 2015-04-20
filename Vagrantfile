@@ -29,7 +29,7 @@ Vagrant.configure(2) do |config|
   config.hostmanager.manage_host = true
   config.hostmanager.ignore_private_ip = false
   config.hostmanager.include_offline = true
-  config.hostmanager.aliases = %w()
+  config.hostmanager.aliases = %w(phpmyadmin.local)
   config.vm.provision "shell", inline: "touch /etc/hosts"
   config.vm.provision :hostmanager
   
@@ -38,6 +38,14 @@ Vagrant.configure(2) do |config|
     v.check_guest_additions = false
     v.functional_vboxsf     = false
   end
+
+  # install docker compose
+  $docker_compose_install_script = <<SCRIPT
+  mkdir -p /opt/bin
+  curl -sL https://github.com/docker/compose/releases/download/1.2.0/docker-compose-`uname -s`-`uname -m` > /opt/bin/docker-compose
+  chmod +x /opt/bin/docker-compose
+SCRIPT
+  config.vm.provision "shell", inline: $docker_compose_install_script 
 
   # docker run
   config.vm.provision "shell",

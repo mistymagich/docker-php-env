@@ -1,3 +1,3 @@
 FROM nginx
 
-ADD sandbox.local.conf /etc/nginx/conf.d/sandbox.local.conf
+ADD wildcard.conf /etc/nginx/conf.d/wildcard.conf

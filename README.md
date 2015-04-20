@@ -127,3 +127,8 @@ Nginxコンテナはホスト名phpでPHP(FPM)コンテナを参照していま�
 2. cd vagrant-docker-php
 1. **docker-compose.yml**の**volumes**の左側の現在のフルパスに修正
 2. docker-compose up
+
+
+## 参考
+
+* [kasperisager/phpstack](https://github.com/kasperisager/phpstack)

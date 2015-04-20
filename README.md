@@ -27,7 +27,7 @@ Docker,Docker ComposeはCoreOSに含まれているのでインストールの�
 ## セットアップ ##
 
 ```bash
-	git clone https://github.com/mistymagich/vagrant-docker-php.git
+	git clone https://github.com/mistymagich/docker-php-env.git
     cd docker-php-env
 	docker-compose up
 ```
@@ -42,7 +42,7 @@ hostsファイルに以下を追加します
 ### Windowsの場合
 
 ```bash
-	git clone https://github.com/mistymagich/vagrant-docker-php.git
+	git clone https://github.com/mistymagich/docker-php-env.git
     vagrant up
 ```
 

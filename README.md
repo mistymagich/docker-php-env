@@ -1,10 +1,17 @@
-# vagrant-docker-php #
+# docker-php-env #
 
-Vagrant+Docker(Docker Compose)で作るPHPの実行環境
+Docker(Docker Compose)で作るPHPの開発用実行環境
 
 php,nginx,mysqlのコンテナを動かして、PHPを実行させる環境です。
 
 ## 必要なもの ##
+
+* [Docker](https://www.docker.com/) バージョン 1.5.0 以上
+* [Docker Compose](http://docs.docker.com/compose/)
+
+
+Windows環境の場合、仮想OSとして[CoreOS](https://coreos.com/)を起動し、そこから起動させます。
+Docker,Docker ComposeはCoreOSに含まれているのでインストールの必要はありません。
 
 * [VirtualBox](https://www.virtualbox.org)
 * [Vagrant](https://www.vagrantup.com)
@@ -16,22 +23,35 @@ php,nginx,mysqlのコンテナを動かして、PHPを実行させる環境で�
 	  vagrant plugin install vagrant-hostmanager
 	  ```
 
-* [Docker](https://www.docker.com/) バージョン 1.5.0 以上
-* [Docker Compose](http://docs.docker.com/compose/)
-
 
 ## セットアップ ##
 
-ホストOSより
+```bash
+	git clone https://github.com/mistymagich/vagrant-docker-php.git
+    cd docker-php-env
+	docker-compose up
+```
+
+hostsファイルに以下を追加します
+
+```
+	127.0.0.1 sandbox.local
+```
+
+
+### Windowsの場合
 
 ```bash
 	git clone https://github.com/mistymagich/vagrant-docker-php.git
-	cd vagrant-docker-php
-	vagrant up
+    vagrant up
 ```
 
-正常に起動できれば、ブラウザで http://sandbox.local でアクセスするとPHPInfoが表示されます。
+* Vagrant Host Managerによってhostsファイルの編集が行われるので、手動での編集は不要。
+* hostsファイルがアンチウイルスソフトなどによって編集不可にされている場合があるので、あらかじめ解除しておく。
 
+
+
+正常に起動できれば、ブラウザで http://sandbox.local でアクセスするとPHPInfoが表示されます。
 
 ## 構造 ##
 
@@ -76,7 +96,16 @@ Nginxコンテナはホスト名phpでPHP(FPM)コンテナを参照していま�
 
 ## PHPMyAdminのインストールサンプル ##
 
-1. **Vagrantfile**の**config.hostmanager.aliases**に**phpmyadmin.local**を追加してvagrant up
+(Windowsの場合)
+**Vagrantfile**の**config.hostmanager.aliases**に**phpmyadmin.local**を追加してvagrant up
+(それ以外)
+hostsファイルに以下を追加します
+
+```
+	127.0.0.1 phpmyadmin.local
+```
+
+
 2. wwwフォルダに**phpmyadmin**フォルダを作成し、さらにその中に**public**フォルダを作成する
 3. [PHPMyAdmin](http://www.phpmyadmin.net/home_page/downloads.php)をダウンロード
 4. 解凍して、中にあるPHPファイルを2.で作成したpublic以下にコピー
@@ -105,29 +134,14 @@ Nginxコンテナはホスト名phpでPHP(FPM)コンテナを参照していま�
 
 ## その他 ##
 
-### アクセスログ
-
-ゲストOSにログインしたのち、
+### コンテナのログ出力
 
 ```bash
-	cd /vagrant
     docker-compose logs
 ```
 
-※MySQLコンテナ、PHP(FPM)コンテナのログ出力も表示されます。
-
-
-### ホスト名とIPの関連付けについて
-
-ホストOSのhostsファイルに任意のホスト名とゲストOSのIPを対応付けることでVagrant Host Managerを使用しなくても利用可能です。
-
-### VagrantなしでDockerから起動する場合
-
-1. git clone https://github.com/mistymagich/vagrant-docker-php.git
-2. cd vagrant-docker-php
-1. **docker-compose.yml**の**volumes**の左側の現在のフルパスに修正
-2. docker-compose up
-
+Nginxコンテナ、MySQLコンテナ、PHP(FPM)コンテナのログ出力がまとめて表示されます。
+windowsの場合は、ゲストOSにSSHログインしてコマンドを実行する
 
 ## 参考
 

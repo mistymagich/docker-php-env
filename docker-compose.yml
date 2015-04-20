@@ -1,19 +1,19 @@
 app:
-    build: /vagrant/php-fpm
+    build: php-fpm
     links:
         - db:mysql
     volumes:
-        - /vagrant/www:/var/www/app
+        - www:/var/www/app
 
 web:
-    build: /vagrant/nginx
+    build: nginx
     ports:
         - "80:80"
         - "443:443"
     links:
         - app:php
     volumes:
-        - /vagrant/www:/var/www/app
+        - www:/var/www/app
 
 db:
     image: mysql
